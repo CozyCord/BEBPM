@@ -1,0 +1,32 @@
+{
+  "project": "1.21.11",
+  "branch": {
+    "id": "",
+    "path": "E:/Modding/MELEONS MODS/BEBPM"
+  },
+  "root": "E:/Modding/MELEONS MODS/BEBPM",
+  "parameters": {
+    "swaps": {
+      "mod_version": "\"1.0.0\"",
+      "minecraft": "\"1.21.11\""
+    },
+    "dependencies": {
+      "": {
+        "type": "dev.kikugie.semver.data.SemanticVersion",
+        "components": [
+          1,
+          21,
+          11
+        ]
+      },
+      "minecraft": {
+        "type": "dev.kikugie.semver.data.SemanticVersion",
+        "components": [
+          1,
+          21,
+          11
+        ]
+      }
+    }
+  }
+}

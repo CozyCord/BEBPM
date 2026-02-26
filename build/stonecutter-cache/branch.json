@@ -1,0 +1,23 @@
+{
+  "id": "",
+  "root": "E:/Modding/MELEONS MODS/BEBPM",
+  "nodes": [
+    {
+      "project": "1.20.1",
+      "active": true,
+      "path": "E:/Modding/MELEONS MODS/BEBPM/versions/1.20.1"
+    },
+    {
+      "project": "1.21.1",
+      "path": "E:/Modding/MELEONS MODS/BEBPM/versions/1.21.1"
+    },
+    {
+      "project": "1.21.4",
+      "path": "E:/Modding/MELEONS MODS/BEBPM/versions/1.21.4"
+    },
+    {
+      "project": "1.21.11",
+      "path": "E:/Modding/MELEONS MODS/BEBPM/versions/1.21.11"
+    }
+  ]
+}
