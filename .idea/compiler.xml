@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="17">
+      <module name="BEBPM.1.21.1" target="21" />
+      <module name="BEBPM.1.21.1.main" target="21" />
+      <module name="BEBPM.1.21.1.test" target="21" />
+      <module name="BEBPM.1.21.4" target="21" />
+      <module name="BEBPM.1.21.4.main" target="21" />
+      <module name="BEBPM.1.21.4.test" target="21" />
+    </bytecodeTargetLevel>
   </component>
 </project>

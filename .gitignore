@@ -1,0 +1,31 @@
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+.gradletasknamecache
+# the wrapper jar is intentionally committed
+!gradle/wrapper/gradle-wrapper.jar
+
+# Stonecutter: generated sources and caches
+build/stonecutter-cache/
+**/build/stonecutter-cache/
+**/build/generated/stonecutter/
+
+# Stonecutter per-version subprojects
+versions/*/build/
+versions/*/.gradle/
+versions/1.20.1/build/
+versions/1.20.1/.gradle/
+versions/1.21.11/build/
+versions/1.21.11/.gradle/
+
+# Fabric dev runtime
+run/
+
+# Loom
+.fabric/
+remappedSrc/
+
+# OS
+.DS_Store
+Thumbs.db

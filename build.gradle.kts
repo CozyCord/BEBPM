@@ -13,6 +13,8 @@ val requiredJava = when {
 
 repositories {
     maven("https://maven.fabricmc.net/")
+    maven("https://maven.shedaniel.me/")
+    maven("https://maven.terraformersmc.com/releases/")
     mavenCentral()
 }
 
@@ -20,6 +22,19 @@ dependencies {
     minecraft("com.mojang:minecraft:${sc.current.version}")
     mappings("net.fabricmc:yarn:${property("deps.yarn_mappings")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+
+    // Optional at runtime: the config screen is only reached through Mod Menu, which checks
+    // that Cloth Config is present first. findProperty keeps versions that have not pinned
+    // these yet from breaking configuration for every other version.
+    findProperty("deps.cloth_config")?.let {
+        modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:$it") { isTransitive = false }
+        // me.shedaniel.math.Point, required by Cloth's tooltip API. Compile-time only:
+        // Cloth ships this as a nested jar, so it is already present at runtime.
+        compileOnly("me.shedaniel.cloth:basic-math:0.6.1")
+    }
+    findProperty("deps.modmenu")?.let {
+        modCompileOnly("com.terraformersmc:modmenu:$it") { isTransitive = false }
+    }
 }
 
 loom {
