@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mixin(EnchantingTableBlock.class)
+@Mixin(value = EnchantingTableBlock.class, priority = 100)
 public class EnchantingTableBlockMixin {
 
     //? if <1.21 {
@@ -38,13 +38,17 @@ public class EnchantingTableBlockMixin {
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void bebpm$expandBookshelfRange(CallbackInfo ci) {
-        List<BlockPos> expanded = new ArrayList<>();
-        for (int y = -3; y <= 10; y++) {
-            for (int x = -3; x <= 3; x++) {
-                for (int z = -3; z <= 3; z++) {
-                    if (Math.abs(x) >= 2 || Math.abs(z) >= 2) {
-                        expanded.add(new BlockPos(x, y, z));
+        final int reach = 10;
+        final int span = 2 * reach + 1;
+
+        List<BlockPos> expanded = new ArrayList<>(span * span * span);
+        for (int y = -reach; y <= reach; y++) {
+            for (int x = -reach; x <= reach; x++) {
+                for (int z = -reach; z <= reach; z++) {
+                    if (x == 0 && y == 0 && z == 0) {
+                        continue;
                     }
+                    expanded.add(new BlockPos(x, y, z));
                 }
             }
         }
@@ -55,9 +59,13 @@ public class EnchantingTableBlockMixin {
     private static void bebpm$skipAirGapCheck(World world, BlockPos tablePos, BlockPos providerOffset, CallbackInfoReturnable<Boolean> cir) {
         BlockState state = world.getBlockState(tablePos.add(providerOffset));
         //? if >=1.21 {
-        /*cir.setReturnValue(state.isIn(BlockTags.ENCHANTMENT_POWER_PROVIDER));
+        /*if (state.isIn(BlockTags.ENCHANTMENT_POWER_PROVIDER)) {
+            cir.setReturnValue(true);
+        }
         *///?} else {
-        cir.setReturnValue(state.isIn(POWER_PROVIDER_TAG));
+        if (state.isIn(POWER_PROVIDER_TAG)) {
+            cir.setReturnValue(true);
+        }
         //?}
     }
 }
