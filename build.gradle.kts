@@ -13,6 +13,8 @@ val requiredJava = when {
 
 repositories {
     maven("https://maven.fabricmc.net/")
+    maven("https://maven.shedaniel.me/")
+    maven("https://maven.terraformersmc.com/releases/")
     mavenCentral()
 }
 
@@ -20,6 +22,14 @@ dependencies {
     minecraft("com.mojang:minecraft:${sc.current.version}")
     mappings("net.fabricmc:yarn:${property("deps.yarn_mappings")}:v2")
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+
+    findProperty("deps.cloth_config")?.let {
+        modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:$it") { isTransitive = false }
+        compileOnly("me.shedaniel.cloth:basic-math:0.6.1")
+    }
+    findProperty("deps.modmenu")?.let {
+        modCompileOnly("com.terraformersmc:modmenu:$it") { isTransitive = false }
+    }
 }
 
 loom {

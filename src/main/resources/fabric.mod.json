@@ -13,6 +13,9 @@
   "entrypoints": {
     "main": [
       "net.cozystudios.bebpm.BEBPM"
+    ],
+    "modmenu": [
+      "net.cozystudios.bebpm.BEBPMModMenu"
     ]
   },
   "mixins": ["bebpm.mixins.json"],
@@ -20,5 +23,9 @@
     "fabricloader": ">=0.17.2",
     "minecraft": "${minecraft}",
     "java": ">=17"
+  },
+  "suggests": {
+    "modmenu": "*",
+    "cloth-config": "*"
   }
 }
