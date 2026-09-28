@@ -1,11 +1,19 @@
+import net.fabricmc.loom.api.LoomGradleExtensionAPI
+
 plugins {
-    id("net.fabricmc.fabric-loom-remap")
+    java
 }
+
+val remapped = sc.current.parsed < "26.1"
+apply(plugin = if (remapped) "net.fabricmc.fabric-loom-remap" else "net.fabricmc.fabric-loom")
+
+val loom = the<LoomGradleExtensionAPI>()
 
 version = "${property("mod.version")}-${sc.current.version}"
 base.archivesName = property("mod.id") as String
 
 val requiredJava = when {
+    sc.current.parsed >= "26.1" -> JavaVersion.VERSION_25
     sc.current.parsed >= "1.20.6" -> JavaVersion.VERSION_21
     sc.current.parsed >= "1.18" -> JavaVersion.VERSION_17
     else -> JavaVersion.VERSION_1_8
@@ -19,29 +27,38 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${sc.current.version}")
-    mappings("net.fabricmc:yarn:${property("deps.yarn_mappings")}:v2")
-    modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    "minecraft"("com.mojang:minecraft:${sc.current.version}")
+    if (remapped) {
+        "mappings"(loom.officialMojangMappings())
+        "modImplementation"("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    } else {
+        "implementation"("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    }
 
-    // Optional at runtime: the config screen is only reached through Mod Menu, which checks
-    // that Cloth Config is present first. findProperty keeps versions that have not pinned
-    // these yet from breaking configuration for every other version.
+    val modCompileOnly = if (remapped) "modCompileOnly" else "compileOnly"
     findProperty("deps.cloth_config")?.let {
         modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:$it") { isTransitive = false }
-        // me.shedaniel.math.Point, required by Cloth's tooltip API. Compile-time only:
-        // Cloth ships this as a nested jar, so it is already present at runtime.
-        compileOnly("me.shedaniel.cloth:basic-math:0.6.1")
+        "compileOnly"("me.shedaniel.cloth:basic-math:0.6.1")
     }
     findProperty("deps.modmenu")?.let {
         modCompileOnly("com.terraformersmc:modmenu:$it") { isTransitive = false }
     }
+
+    val localRuntime = if (remapped) "modLocalRuntime" else "localRuntime"
+    findProperty("deps.fabric_api")?.let {
+        localRuntime("net.fabricmc.fabric-api:fabric-api:$it")
+    }
+    findProperty("deps.cloth_config")?.let {
+        localRuntime("me.shedaniel.cloth:cloth-config-fabric:$it") { isTransitive = false }
+    }
+    findProperty("deps.modmenu")?.let {
+        localRuntime("com.terraformersmc:modmenu:$it") { isTransitive = false }
+    }
 }
 
-loom {
-    runConfigs.all {
-        ideConfigGenerated(true)
-        runDir = "../../run"
-    }
+loom.runConfigs.all {
+    ideConfigGenerated(true)
+    runDir = "../../run/${sc.current.version}"
 }
 
 java {
@@ -56,17 +73,20 @@ tasks {
         inputs.property("name", project.property("mod.name"))
         inputs.property("version", project.property("mod.version"))
         inputs.property("minecraft", project.property("mod.mc_dep"))
+        inputs.property("loader", project.property("mod.loader_dep"))
+        inputs.property("java", requiredJava.majorVersion)
 
         val props = mapOf(
             "id" to project.property("mod.id"),
             "name" to project.property("mod.name"),
             "version" to project.property("mod.version"),
-            "minecraft" to project.property("mod.mc_dep")
+            "minecraft" to project.property("mod.mc_dep"),
+            "loader" to project.property("mod.loader_dep"),
+            "java" to requiredJava.majorVersion
         )
 
-        filesMatching("fabric.mod.json") { expand(props) }
+        filesMatching(listOf("fabric.mod.json", "bebpm.mixins.json")) { expand(props) }
 
-        // 1.21.2+: Tag directories changed from plural to singular (blocks -> block, etc.)
         if (sc.current.parsed >= "1.21.2") {
             doLast {
                 val dataDir = destinationDir.resolve("data")
@@ -105,7 +125,7 @@ tasks {
 
     register<Copy>("buildAndCollect") {
         group = "build"
-        from(remapJar.map { it.archiveFile }, remapSourcesJar.map { it.archiveFile })
+        from(named(if (remapped) "remapJar" else "jar"), named(if (remapped) "remapSourcesJar" else "sourcesJar"))
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }

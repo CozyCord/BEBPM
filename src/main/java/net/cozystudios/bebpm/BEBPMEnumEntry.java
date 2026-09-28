@@ -1,9 +1,13 @@
 package net.cozystudios.bebpm;
 
 import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
+//? if >=26.1 {
+/*import net.minecraft.client.gui.GuiGraphicsExtractor;
+*///?} else {
+import net.minecraft.client.gui.GuiGraphics;
+//?}
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -12,37 +16,43 @@ import java.util.function.Supplier;
 
 public class BEBPMEnumEntry<T extends Enum<?>> extends EnumListEntry<T> {
 
-    private final Supplier<Optional<Text[]>> tooltipLines;
+    private final Supplier<Optional<Component[]>> tooltipLines;
 
-    public BEBPMEnumEntry(Text fieldName, Class<T> type, T value, Supplier<T> defaultValue,
-                          Consumer<T> saveConsumer, Function<Enum, Text> nameProvider,
-                          Supplier<Optional<Text[]>> tooltipLines) {
-        super(fieldName, type, value, Text.translatable("text.cloth-config.reset_value"),
+    public BEBPMEnumEntry(Component fieldName, Class<T> type, T value, Supplier<T> defaultValue,
+                          Consumer<T> saveConsumer, Function<Enum, Component> nameProvider,
+                          Supplier<Optional<Component[]>> tooltipLines) {
+        super(fieldName, type, value, Component.translatable("text.cloth-config.reset_value"),
                 defaultValue, saveConsumer, nameProvider, null, false);
         this.tooltipLines = tooltipLines;
     }
 
     @Override
-    public Optional<Text[]> getTooltip(int mouseX, int mouseY) {
+    public Optional<Component[]> getTooltip(int mouseX, int mouseY) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Text[]> getTooltip() {
+    public Optional<Component[]> getTooltip() {
         return tooltipLines == null ? Optional.empty() : tooltipLines.get();
     }
 
     @Override
-    public void render(DrawContext graphics, int index, int y, int x, int entryWidth,
+    //? if >=26.1 {
+    /*public void extractRenderState(GuiGraphicsExtractor graphics, int index, int y, int x, int entryWidth,
+                                   int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
+        super.extractRenderState(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
+    *///?} else {
+    public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth,
                        int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
         super.render(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
+    //?}
 
         if (!isMouseInside(mouseX, mouseY, x, y, entryWidth, entryHeight)) {
             return;
         }
 
         getTooltip().ifPresent(lines -> {
-            OrderedText[] wrapped = wrapLinesToScreen(lines);
+            FormattedCharSequence[] wrapped = wrapLinesToScreen(lines);
             if (wrapped.length > 0) {
                 addTooltip(BEBPMTooltips.belowLeft(wrapped, mouseX, mouseY));
             }

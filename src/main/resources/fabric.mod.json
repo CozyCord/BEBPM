@@ -20,9 +20,9 @@
   },
   "mixins": ["bebpm.mixins.json"],
   "depends": {
-    "fabricloader": ">=0.17.2",
+    "fabricloader": "${loader}",
     "minecraft": "${minecraft}",
-    "java": ">=17"
+    "java": ">=${java}"
   },
   "suggests": {
     "modmenu": "*",

@@ -1,14 +1,11 @@
 package net.cozystudios.bebpm;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,19 +14,17 @@ import java.util.Set;
 
 public final class BEBPMLineOfSight {
 
-    private static final TagKey<Block> POWER_PERMEABLE = TagKey.of(
-            RegistryKeys.BLOCK, Identifier.of(BEBPM.MOD_ID, "power_permeable")
-    );
+    private static final TagKey<Block> POWER_PERMEABLE = BEBPMIds.blockTag(BEBPM.MOD_ID, "power_permeable");
 
     private static List<TagKey<Block>> userTags = List.of();
-    private static Set<Identifier> userBlocks = Set.of();
+    private static Set<String> userBlocks = Set.of();
 
     private BEBPMLineOfSight() {
     }
 
     public static void setUserPermeable(List<String> entries) {
         List<TagKey<Block>> tags = new ArrayList<>();
-        Set<Identifier> blocks = new HashSet<>();
+        Set<String> blocks = new HashSet<>();
 
         if (entries != null) {
             for (String raw : entries) {
@@ -38,13 +33,13 @@ public final class BEBPMLineOfSight {
                     continue;
                 }
                 boolean isTag = entry.startsWith("#");
-                Identifier id = Identifier.tryParse(isTag ? entry.substring(1) : entry);
+                String id = BEBPMIds.normalise(isTag ? entry.substring(1) : entry);
                 if (id == null) {
                     BEBPM.LOGGER.warn("Ignoring unparseable permeable entry '{}'", raw);
                     continue;
                 }
                 if (isTag) {
-                    tags.add(TagKey.of(RegistryKeys.BLOCK, id));
+                    tags.add(BEBPMIds.blockTag(id));
                 } else {
                     blocks.add(id);
                 }
@@ -60,10 +55,10 @@ public final class BEBPMLineOfSight {
         if (entry.isEmpty()) {
             return false;
         }
-        return Identifier.tryParse(entry.startsWith("#") ? entry.substring(1) : entry) != null;
+        return BEBPMIds.normalise(entry.startsWith("#") ? entry.substring(1) : entry) != null;
     }
 
-    public static boolean allows(World world, BlockPos tablePos, BlockPos providerOffset,
+    public static boolean allows(Level level, BlockPos tablePos, BlockPos providerOffset,
                                  BEBPMConfig.LineOfSight mode) {
         if (mode == BEBPMConfig.LineOfSight.OFF) {
             return true;
@@ -78,7 +73,7 @@ public final class BEBPMLineOfSight {
             return true;
         }
 
-        BlockPos.Mutable cursor = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int step = 1; step < steps; step++) {
             double along = (double) step / steps;
             int x = tablePos.getX() + (int) Math.round(dx * along);
@@ -90,13 +85,13 @@ public final class BEBPMLineOfSight {
             }
 
             cursor.set(x, y, z);
-            BlockState state = world.getBlockState(cursor);
+            BlockState state = level.getBlockState(cursor);
 
             if (mode == BEBPMConfig.LineOfSight.ON) {
-                if (!state.isIn(BlockTags.ENCHANTMENT_POWER_TRANSMITTER)) {
+                if (!state.is(BlockTags.ENCHANTMENT_POWER_TRANSMITTER)) {
                     return false;
                 }
-            } else if (state.isFullCube(world, cursor) && !isPermeable(state)) {
+            } else if (state.isCollisionShapeFullBlock(level, cursor) && !isPermeable(state)) {
                 return false;
             }
         }
@@ -104,14 +99,14 @@ public final class BEBPMLineOfSight {
     }
 
     private static boolean isPermeable(BlockState state) {
-        if (state.isIn(POWER_PERMEABLE)) {
+        if (state.is(POWER_PERMEABLE)) {
             return true;
         }
         for (TagKey<Block> tag : userTags) {
-            if (state.isIn(tag)) {
+            if (state.is(tag)) {
                 return true;
             }
         }
-        return !userBlocks.isEmpty() && userBlocks.contains(Registries.BLOCK.getId(state.getBlock()));
+        return !userBlocks.isEmpty() && userBlocks.contains(BEBPMIds.blockId(state.getBlock()));
     }
 }
