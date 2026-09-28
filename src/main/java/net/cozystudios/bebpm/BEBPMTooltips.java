@@ -2,9 +2,9 @@ package net.cozystudios.bebpm;
 
 import me.shedaniel.clothconfig2.api.Tooltip;
 import me.shedaniel.math.Point;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.text.OrderedText;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.util.FormattedCharSequence;
 
 public final class BEBPMTooltips {
 
@@ -16,11 +16,11 @@ public final class BEBPMTooltips {
     private BEBPMTooltips() {
     }
 
-    public static Tooltip belowLeft(OrderedText[] wrapped, int mouseX, int mouseY) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    public static Tooltip belowLeft(FormattedCharSequence[] wrapped, int mouseX, int mouseY) {
+        Font font = Minecraft.getInstance().font;
         int width = 0;
-        for (OrderedText line : wrapped) {
-            width = Math.max(width, textRenderer.getWidth(line));
+        for (FormattedCharSequence line : wrapped) {
+            width = Math.max(width, font.width(line));
         }
 
         int visibleLeft = Math.max(mouseX - width - GAP - (BOX_INSET - BORDER * 2),

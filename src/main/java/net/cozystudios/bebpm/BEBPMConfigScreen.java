@@ -4,9 +4,9 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.gui.ClothConfigScreen;
 import me.shedaniel.clothconfig2.gui.widget.SearchFieldEntry;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -23,12 +23,12 @@ public final class BEBPMConfigScreen {
 
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
-                .setTitle(Text.translatable("bebpm.config.title"))
+                .setTitle(Component.translatable("bebpm.config.title"))
                 .setSavingRunnable(config::save)
                 .setAfterInitConsumer(BEBPMConfigScreen::removeSearchBar);
 
         ConfigCategory category = builder.getOrCreateCategory(
-                Text.translatable("bebpm.config.category.range"));
+                Component.translatable("bebpm.config.category.range"));
         category.addEntry(slider("bebpm.config.radius_x", config.radiusX,
                 BEBPMConfig.VANILLA_RADIUS_X, value -> config.radiusX = value, 1));
 
@@ -42,7 +42,7 @@ public final class BEBPMConfigScreen {
                 BEBPMConfig.VANILLA_RADIUS_DOWN, value -> config.radiusDown = value, 1));
 
         category.addEntry(new BEBPMEnumEntry<>(
-                Text.translatable("bebpm.config.line_of_sight"),
+                Component.translatable("bebpm.config.line_of_sight"),
                 BEBPMConfig.LineOfSight.class, config.lineOfSight,
                 () -> BEBPMConfig.DEFAULT_LINE_OF_SIGHT,
                 value -> config.lineOfSight = value,
@@ -50,7 +50,7 @@ public final class BEBPMConfigScreen {
                 () -> Optional.of(lineOfSightTooltip())));
 
         category.addEntry(new BEBPMStringListEntry(
-                Text.translatable("bebpm.config.decor_permeable"),
+                Component.translatable("bebpm.config.decor_permeable"),
                 new ArrayList<>(config.decorPermeable),
                 ArrayList::new,
                 value -> config.decorPermeable = new ArrayList<>(value),
@@ -59,39 +59,39 @@ public final class BEBPMConfigScreen {
         return builder.build();
     }
 
-    private static Formatting lineOfSightColour(BEBPMConfig.LineOfSight state) {
+    private static ChatFormatting lineOfSightColour(BEBPMConfig.LineOfSight state) {
         return switch (state) {
-            case OFF -> Formatting.GREEN;
-            case DECOR_ONLY -> Formatting.GOLD;
-            case ON -> Formatting.RED;
+            case OFF -> ChatFormatting.GREEN;
+            case DECOR_ONLY -> ChatFormatting.GOLD;
+            case ON -> ChatFormatting.RED;
         };
     }
 
-    private static Text lineOfSightName(Enum<?> value) {
-        Text name = Text.translatable("bebpm.config.line_of_sight."
+    private static Component lineOfSightName(Enum<?> value) {
+        Component name = Component.translatable("bebpm.config.line_of_sight."
                 + value.name().toLowerCase(Locale.ROOT));
         return value instanceof BEBPMConfig.LineOfSight state
-                ? name.copy().formatted(lineOfSightColour(state))
+                ? name.copy().withStyle(lineOfSightColour(state))
                 : name;
     }
 
-    private static Text[] lineOfSightTooltip() {
-        return new Text[]{
+    private static Component[] lineOfSightTooltip() {
+        return new Component[]{
                 labelled(BEBPMConfig.LineOfSight.OFF, "off.1"),
-                Text.translatable("bebpm.config.line_of_sight.off.2"),
+                Component.translatable("bebpm.config.line_of_sight.off.2"),
                 labelled(BEBPMConfig.LineOfSight.DECOR_ONLY, "decor_only.1"),
-                Text.translatable("bebpm.config.line_of_sight.decor_only.2"),
+                Component.translatable("bebpm.config.line_of_sight.decor_only.2"),
                 labelled(BEBPMConfig.LineOfSight.ON, "on.1"),
         };
     }
 
-    private static Text labelled(BEBPMConfig.LineOfSight state, String bodyKey) {
+    private static Component labelled(BEBPMConfig.LineOfSight state, String bodyKey) {
         String key = state.name().toLowerCase(Locale.ROOT);
-        return Text.empty()
-                .append(Text.translatable("bebpm.config.line_of_sight." + key + ".label")
-                        .formatted(lineOfSightColour(state)))
+        return Component.empty()
+                .append(Component.translatable("bebpm.config.line_of_sight." + key + ".label")
+                        .withStyle(lineOfSightColour(state)))
                 .append(" ")
-                .append(Text.translatable("bebpm.config.line_of_sight." + bodyKey));
+                .append(Component.translatable("bebpm.config.line_of_sight." + bodyKey));
     }
 
     private static void removeSearchBar(Screen screen) {
@@ -102,18 +102,18 @@ public final class BEBPMConfigScreen {
 
     private static BEBPMSliderEntry slider(String key, int value, int vanillaFloor,
                                            Consumer<Integer> save, int tooltipLines) {
-        Text[] tooltip = tooltip(key, tooltipLines);
-        BEBPMSliderEntry entry = new BEBPMSliderEntry(Text.translatable(key),
+        Component[] tooltip = tooltip(key, tooltipLines);
+        BEBPMSliderEntry entry = new BEBPMSliderEntry(Component.translatable(key),
                 BEBPMConfig.SLIDER_MIN, BEBPMConfig.MAX_RADIUS, value,
                 () -> BEBPMConfig.DEFAULT_RADIUS, save, () -> Optional.of(tooltip));
         snapToTrack(entry, vanillaFloor);
         return entry;
     }
 
-    private static Text[] tooltip(String key, int lines) {
-        Text[] texts = new Text[lines];
+    private static Component[] tooltip(String key, int lines) {
+        Component[] texts = new Component[lines];
         for (int i = 0; i < lines; i++) {
-            texts[i] = Text.translatable(key + ".tooltip." + (i + 1));
+            texts[i] = Component.translatable(key + ".tooltip." + (i + 1));
         }
         return texts;
     }
@@ -130,8 +130,8 @@ public final class BEBPMConfigScreen {
                 }
             }
             return value <= vanillaFloor
-                    ? Text.translatable("bebpm.config.vanilla")
-                    : Text.literal(String.valueOf(value));
+                    ? Component.translatable("bebpm.config.vanilla")
+                    : Component.literal(String.valueOf(value));
         });
     }
 }
