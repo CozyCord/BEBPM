@@ -22,6 +22,8 @@ versions/26.1.2/build/
 versions/26.1.2/.gradle/
 versions/26.2/build/
 versions/26.2/.gradle/
+versions/26.3/build/
+versions/26.3/.gradle/
 
 # Fabric dev runtime
 run/
@@ -36,3 +38,6 @@ Thumbs.db
 
 # IDE
 .idea/
+
+# Local notes
+RESEARCH.md
