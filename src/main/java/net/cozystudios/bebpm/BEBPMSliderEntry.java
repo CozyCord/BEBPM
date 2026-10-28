@@ -1,3 +1,4 @@
+//? if cloth {
 package net.cozystudios.bebpm;
 
 import me.shedaniel.clothconfig2.api.Tooltip;
@@ -78,3 +79,4 @@ public class BEBPMSliderEntry extends IntegerSliderEntry {
         });
     }
 }
+//?}

@@ -23,6 +23,12 @@ public final class BEBPMOffsets {
         }
     }
 
+    public static boolean isVanillaOffset(BlockPos offset) {
+        int x = Math.abs(offset.getX());
+        int z = Math.abs(offset.getZ());
+        return x <= 2 && z <= 2 && (x == 2 || z == 2) && offset.getY() >= 0 && offset.getY() <= 1;
+    }
+
     private static List<BlockPos> build() {
         BEBPMConfig config = BEBPMConfig.get();
         int rx = config.effectiveRadiusX();

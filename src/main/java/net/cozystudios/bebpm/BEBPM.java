@@ -1,15 +1,16 @@
 package net.cozystudios.bebpm;
 
-import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BEBPM implements ModInitializer {
+public final class BEBPM {
     public static final String MOD_ID = "bebpm";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    @Override
-    public void onInitialize() {
+    private BEBPM() {
+    }
+
+    public static void init() {
         LOGGER.info("BEBPM loaded - bookshelf enchanting power rules broken!");
     }
 }

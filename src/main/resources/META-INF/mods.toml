@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="${forge_range}"
+license="CC0-1.0"
+
+[[mods]]
+modId="${id}"
+version="${version}"
+displayName="${name}"
+authors="CozyStudios"
+description='''Breaks Y-level and line-of-sight restrictions for bookshelves powering enchanting tables. Expanded range, no air-gap needed, tag-based for mod compatibility.'''
+
+[[dependencies.${id}]]
+    modId="forge"
+    mandatory=true
+    versionRange="${forge_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${id}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${mc_range_toml}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${id}]]
+    modId="cloth_config"
+    mandatory=false
+    versionRange="*"
+    ordering="AFTER"
+    side="CLIENT"

@@ -12,7 +12,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.cozystudios.bebpm.BEBPM"
+      "net.cozystudios.bebpm.BEBPMFabric"
     ],
     "modmenu": [
       "net.cozystudios.bebpm.BEBPMModMenu"

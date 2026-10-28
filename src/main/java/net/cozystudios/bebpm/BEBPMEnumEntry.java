@@ -1,3 +1,4 @@
+//? if cloth {
 package net.cozystudios.bebpm;
 
 import me.shedaniel.clothconfig2.gui.entries.EnumListEntry;
@@ -59,3 +60,4 @@ public class BEBPMEnumEntry<T extends Enum<?>> extends EnumListEntry<T> {
         });
     }
 }
+//?}

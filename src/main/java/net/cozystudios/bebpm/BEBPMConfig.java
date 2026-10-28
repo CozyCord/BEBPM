@@ -2,7 +2,6 @@ package net.cozystudios.bebpm;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.Reader;
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public final class BEBPMConfig {
     }
 
     private static Path path() {
-        return FabricLoader.getInstance().getConfigDir().resolve(BEBPM.MOD_ID + ".json");
+        return BEBPMPlatform.configDir().resolve(BEBPM.MOD_ID + ".json");
     }
 
     private static BEBPMConfig load() {

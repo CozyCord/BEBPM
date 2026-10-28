@@ -1,3 +1,4 @@
+//? if cloth {
 package net.cozystudios.bebpm;
 
 import me.shedaniel.clothconfig2.gui.entries.BaseListCell;
@@ -98,3 +99,4 @@ public class BEBPMStringListEntry extends StringListListEntry {
         }
     }
 }
+//?}

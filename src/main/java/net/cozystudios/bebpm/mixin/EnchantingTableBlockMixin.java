@@ -47,10 +47,10 @@ public class EnchantingTableBlockMixin {
             return;
         }
 
-        if (!BEBPMLineOfSight.allows(level, tablePos, providerOffset, BEBPMConfig.get().lineOfSight)) {
-            return;
+        if (BEBPMLineOfSight.allows(level, tablePos, providerOffset, BEBPMConfig.get().lineOfSight)) {
+            cir.setReturnValue(true);
+        } else if (!BEBPMOffsets.isVanillaOffset(providerOffset)) {
+            cir.setReturnValue(false);
         }
-
-        cir.setReturnValue(true);
     }
 }

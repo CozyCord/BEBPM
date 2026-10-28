@@ -1,3 +1,4 @@
+//? if cloth {
 package net.cozystudios.bebpm;
 
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
@@ -135,3 +136,4 @@ public final class BEBPMConfigScreen {
         });
     }
 }
+//?}
